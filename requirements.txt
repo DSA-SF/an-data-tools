@@ -40,6 +40,7 @@ google-cloud-storage==2.2.0
 google-crc32c==1.5.0
 google-resumable-media==2.3.2
 googleapis-common-protos==1.61.0
+greenlet==3.0.1
 grpcio==1.53.0
 grpcio-status==1.53.0
 gspread==3.7.0
@@ -66,7 +67,6 @@ oauth2client==4.1.3
 oauthlib==3.2.2
 packaging==21.3
 paramiko==2.11.0
-parsons==2.1.0
 pathspec==0.11.2
 petl==1.6.8
 platformdirs==4.0.0
@@ -106,7 +106,7 @@ simple-salesforce==1.11.6
 simplejson==3.16.0
 six==1.16.0
 slackclient==1.3.0
-SQLAlchemy==1.3.23
+SQLAlchemy==2.0.23
 suds-py3==1.3.4.0
 SurveyGizmo==1.2.3
 tenacity==8.2.3
