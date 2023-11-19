@@ -1,6 +1,13 @@
 import db
 from anclient import ActionNetworkClient
-from syncjob import sync_an_people_to_db, sync_an_actions_to_db
+from syncjob import (
+    sync_an_attendances_to_db,
+    sync_an_people_to_db,
+    sync_an_actions_to_db,
+    sync_an_taggings_to_db,
+    sync_an_tags_to_db,
+)
+
 
 def main():
     an = ActionNetworkClient()
@@ -8,7 +15,10 @@ def main():
     db.Base.metadata.create_all(db.engine)
     sync_an_actions_to_db(an, db.Session)
     sync_an_people_to_db(an, db.Session)
+    sync_an_tags_to_db(an, db.Session)
+    sync_an_taggings_to_db(an, db.Session)
+    sync_an_attendances_to_db(an, db.Session)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,12 +1,9 @@
 aiohttp==3.8.6
 aiohttp-retry==2.8.3
 aiosignal==1.3.1
-airtable-python-wrapper==0.13.0
 async-timeout==4.0.3
 attrs==23.1.0
 Authlib==1.2.1
-azure-core==1.29.5
-azure-storage-blob==12.3.2
 bcrypt==4.0.1
 black==22.12.0
 cachetools==5.3.2
@@ -24,8 +21,6 @@ first==2.0.2
 flake8==4.0.1
 frozenlist==1.4.0
 greenlet==3.0.1
-grpcio==1.53.0
-grpcio-status==1.53.0
 gspread==3.7.0
 httplib2==0.19.0
 idna==3.4
@@ -42,16 +37,11 @@ MarkupSafe==2.1.3
 mccabe==0.6.1
 msrest==0.7.1
 multidict==6.0.4
-mypy-extensions==1.0.0
-mysql-connector-python==8.0.18
 newmode==0.1.6
-numpy==1.26.1
 oauth2client==4.1.3
 oauthlib==3.2.2
 packaging==21.3
-paramiko==2.11.0
 pathspec==0.11.2
-petl==1.6.8
 platformdirs==4.0.0
 pluggy==1.3.0
 proto-plus==1.22.3
@@ -81,7 +71,6 @@ requests-oauthlib==1.3.0
 requests-toolbelt==0.10.1
 rpds-py==0.12.0
 rsa==4.9
-s3transfer==0.4.2
 simplejson==3.16.0
 six==1.16.0
 SQLAlchemy==2.0.23

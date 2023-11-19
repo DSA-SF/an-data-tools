@@ -1,4 +1,5 @@
-from sqlalchemy import create_engine
+import datetime
+from sqlalchemy import DateTime, ForeignKey, UniqueConstraint, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import String
@@ -9,6 +10,8 @@ import config
 engine = create_engine(config.POSTGRES_URL)
 Session = sessionmaker(bind=engine)
 
+if config.DEV_DISABLE_FOREIGN_KEY_CHECKS:
+    ForeignKey = lambda *args, **kwargs: None
 
 class Base(DeclarativeBase):
     pass
@@ -30,8 +33,39 @@ class Action(Base):
     action_network_id: Mapped[str] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column(nullable=True)
-    created_date_iso: Mapped[str] = mapped_column()
-    modified_date_iso: Mapped[str] = mapped_column()
+    created_ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+    modified_ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
     browser_url: Mapped[str] = mapped_column()
-    start_date_iso: Mapped[str] = mapped_column(nullable=True)
+    start_date_ts: Mapped[str] = mapped_column(nullable=True)
     location: Mapped[str] = mapped_column(nullable=True)
+
+
+class Attendance(Base):
+    __tablename__ = "attendance"
+    action_network_id: Mapped[str] = mapped_column(primary_key=True)
+    member_action_network_id: Mapped[str] = mapped_column(ForeignKey("member.action_network_id"))
+    action_action_network_id: Mapped[str] = mapped_column(ForeignKey("action.action_network_id"))
+    created_ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        UniqueConstraint("member_action_network_id", "action_action_network_id"),
+    )
+
+
+class Tag(Base):
+    __tablename__ = "tag"
+    action_network_id: Mapped[str] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column()
+
+
+class Tagging(Base):
+    __tablename__ = "tagging"
+    action_network_id: Mapped[str] = mapped_column(primary_key=True)
+    member_action_network_id: Mapped[str] = mapped_column(ForeignKey("member.action_network_id"))
+    tag_action_network_id: Mapped[str] = mapped_column(ForeignKey("tag.action_network_id"))
+    created_ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+    modified_ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        UniqueConstraint("member_action_network_id", "tag_action_network_id"),
+    )
