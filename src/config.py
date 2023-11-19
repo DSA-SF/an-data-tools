@@ -8,3 +8,4 @@ def str2bool(v):
 
 AN_API_KEY = os.getenv("AN_API_KEY")
 DEV_MODE = str2bool(os.getenv("DEV_MODE"))
+POSTGRES_URL = os.getenv("POSTGRES_URL")

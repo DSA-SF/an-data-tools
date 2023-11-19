@@ -4,8 +4,9 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
+import config
 
-engine = create_engine('postgresql://postgres:postgres@localhost:5432/postgres')
+engine = create_engine(config.POSTGRES_URL)
 Session = sessionmaker(bind=engine)
 
 
