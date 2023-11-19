@@ -28,6 +28,25 @@ class ActionNetworkClient:
                 break
 
         return members
+    
+    def get_event_list(self):
+        DEBUG_MAX_PAGES = 1 if config.DEV_MODE else None
+        page = 1
+        events = []
+        while True:
+            logging.info("Fetching events page %s", page)
+            result = self._do_get(f"https://actionnetwork.org/api/v2/events/?page={page}")
+
+            if not result["_embedded"]["osdi:events"]:
+                break
+
+            events.extend(result["_embedded"]["osdi:events"])
+            page += 1
+
+            if DEBUG_MAX_PAGES and page > DEBUG_MAX_PAGES:
+                break
+
+        return events
 
     @limits(calls=4, period=1)
     def _do_get(self, url):
