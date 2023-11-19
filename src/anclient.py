@@ -10,22 +10,13 @@ class ActionNetworkClient:
     def __init__(self, an_api_key=config.AN_API_KEY):
         self.an_api_key = an_api_key
 
-    @limit(calls=4, period=1)
     def get_member_list(self):
-        DEBUG_MAX_PAGES = None
-        DEBUG_MAX_PAGES = 4
+        DEBUG_MAX_PAGES = 1 if config.DEV_MODE else None
         page = 1
         members = []
         while True:
             logging.info("Fetching people page %s", page)
-            r = requests.get(
-                f"https://actionnetwork.org/api/v2/people/?page={page}",
-                headers={
-                    "Content-Type": "application/json",
-                    "OSDI-API-Token": self.an_api_key,
-                },
-            )
-            result = r.json()
+            result = self._do_get(f"https://actionnetwork.org/api/v2/people/?page={page}")
 
             if not result["_embedded"]["osdi:people"]:
                 break
@@ -37,6 +28,17 @@ class ActionNetworkClient:
                 break
 
         return members
+
+    @limits(calls=4, period=1)
+    def _do_get(self, url):
+        r = requests.get(
+            url,
+            headers={
+                "Content-Type": "application/json",
+                "OSDI-API-Token": self.an_api_key,
+            },
+        )
+        return r.json()
 
 if __name__ == '__main__':
     an_client = ActionNetworkClient()

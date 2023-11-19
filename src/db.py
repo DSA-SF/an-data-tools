@@ -15,10 +15,10 @@ class Base(DeclarativeBase):
 
 class Member(Base):
     __tablename__ = "member"
-    action_network_id: Mapped[int] = mapped_column(primary_key=True)
-    first_name: Mapped[str] = mapped_column(String(63))
-    last_name: Mapped[str] = mapped_column(String(63))
-    email: Mapped[str] = mapped_column(String(127))
+    action_network_id: Mapped[str] = mapped_column(primary_key=True)
+    first_name: Mapped[str] = mapped_column(String(63), nullable=True)
+    last_name: Mapped[str] = mapped_column(String(63), nullable=True)
+    email: Mapped[str] = mapped_column(String(127), unique=True)
     
     def __repr__(self) -> str:
         return f"<Member {self.first_name} {self.last_name}>"
