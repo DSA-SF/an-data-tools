@@ -35,13 +35,14 @@ jobs:
       shell: bash
       run: echo "APP_NAME=an-sql-sync" >> $GITHUB_ENV && echo "ORG_NAME=dsa-sf" >> $GITHUB_ENV
 
-    - name: Build and push
+    - name: Build and push branch
       uses: docker/build-push-action@v5
       with:
         context: .
         file: Dockerfile
         push: true
         tags: ghcr.io/${{ env.ORG_NAME }}/${{env.APP_NAME}}:${{ env.BRANCH_NAME }}
+        platforms: linux/amd64,linux/arm64/v8
 
     - name: Build and push latest tag
       if: github.ref == 'refs/heads/main'
@@ -51,3 +52,4 @@ jobs:
         file: Dockerfile
         push: true
         tags: ghcr.io/${{ env.ORG_NAME }}/${{env.APP_NAME}}:latest
+        platforms: linux/amd64,linux/arm64/v8
