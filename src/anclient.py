@@ -1,8 +1,9 @@
 import logging
 from pprint import pprint
 import requests
+from apicache import persist_to_file
 import config
-from ratelimit import limits
+from ratelimit import limits, sleep_and_retry
 
 logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
 
@@ -11,6 +12,7 @@ class ActionNetworkClient:
     def __init__(self, an_api_key=config.AN_API_KEY):
         self.an_api_key = an_api_key
 
+    @persist_to_file('memberlist.json')
     def get_member_list(self):
         DEBUG_MAX_PAGES = 1 if config.DEV_MODE else None
         page = 1
@@ -61,7 +63,7 @@ class ActionNetworkClient:
         page = 1
         attendances = []
         while True:
-            logging.info("Fetching attendance page %s", page)
+            logging.info("Fetching attendance for event %s page %s", event_id, page)
             result = self._do_get(
                 f"https://actionnetwork.org/api/v2/events/{event_id}/attendances/?page={page}"
             )
@@ -69,7 +71,13 @@ class ActionNetworkClient:
             if not result["_embedded"]["osdi:attendances"]:
                 break
 
-            attendances.extend(result["_embedded"]["osdi:attendances"])
+            # AN API sometimes returns bogus attendances. We have to re-query for the specific one and see if it 404s.
+            for attendance in result["_embedded"]["osdi:attendances"]:
+                person_url = attendance["_links"]["osdi:person"]["href"]
+                person_result = self._do_get(person_url)
+                if "error" in person_result:
+                    continue
+                attendances.append(attendance)
             page += 1
 
             if DEBUG_MAX_PAGES and page > DEBUG_MAX_PAGES:
@@ -117,6 +125,7 @@ class ActionNetworkClient:
 
         return taggings
 
+    @sleep_and_retry
     @limits(calls=4, period=1)
     def _do_get(self, url):
         r = requests.get(
