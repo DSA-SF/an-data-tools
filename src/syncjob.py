@@ -18,16 +18,79 @@ def sync_an_people_to_db(an: ActionNetworkClient, Session: db.Session):
                     "action_network_id": first(
                         member["identifiers"],
                         key=lambda x: x.startswith("action_network:"),
-                    ).split(':')[1],
+                    ).split(":")[1],
                     "first_name": member.get("given_name"),
                     "last_name": member.get("family_name"),
                     "email": first(
                         member["email_addresses"], key=lambda x: x["primary"]
                     )["address"],
+                    "phone": first(
+                        member["phone_numbers"], key=lambda x: x["primary"]
+                    ).get("number"),
+                    "dsa_chapter": member.get("custom_fields", {}).get("DSA_chapter"),
+                    "is_union_member": "Yes"
+                    in member.get("custom_fields", {}).get("union_member", "No"),
+                    "is_student": "Yes"
+                    in member.get("custom_fields", {}).get("student_yes_no", "No"),
+                    "join_date": member.get("custom_fields", {}).get("Join_Date")
+                    and parser.parse(member["custom_fields"]["Join_Date"]),
+                    "lapse_date": member.get("custom_fields", {}).get("Xdate")
+                    and parser.parse(member["custom_fields"]["Xdate"]),
+                    "membership_type": member.get("custom_fields", {}).get(
+                        "membership_type"
+                    ),
+                    "membership_status": member.get("custom_fields", {}).get(
+                        "membership_status"
+                    ),
                 }
                 for member in members
             ],
         )
+
+        session.execute(
+            insert(db.Address),
+            [
+                {
+                    "member_action_network_id": first(
+                        member["identifiers"],
+                        key=lambda x: x.startswith("action_network:"),
+                    ).split(":")[1],
+                    "line1": address["address_lines"][0]
+                    if "address_lines" in address
+                    else None,
+                    "line2": address["address_lines"][1]
+                    if len(address.get("address_lines", [])) > 1
+                    else None,
+                    "city": address.get("locality"),
+                    "state": address.get("region"),
+                    "postal_code": address.get("postal_code"),
+                    "country": address.get("country"),
+                    "primary": address.get("primary"),
+                }
+                for member in members
+                for address in member["postal_addresses"]
+                if address.get("address_lines") and address.get("postal_code")
+            ],
+        )
+
+        session.execute(
+            insert(db.Phone),
+            [
+                {
+                    "member_action_network_id": first(
+                        member["identifiers"],
+                        key=lambda x: x.startswith("action_network:"),
+                    ).split(":")[1],
+                    "number": phone.get("number"),
+                    "number_type": phone["number_type"],
+                    "primary": phone["primary"],
+                }
+                for member in members
+                for phone in member["phone_numbers"]
+                if phone.get("number")
+            ],
+        )
+
         session.commit()
 
 
@@ -40,7 +103,7 @@ def sync_an_actions_to_db(an: ActionNetworkClient, Session: db.Session):
                 "action_network_id": first(
                     action["identifiers"],
                     key=lambda x: x.startswith("action_network:"),
-                ).split(':')[1],
+                ).split(":")[1],
                 "title": action.get("title"),
                 "description": action.get("description"),
                 "created_ts": "created_date" in action
@@ -71,7 +134,7 @@ def sync_an_tags_to_db(an: ActionNetworkClient, Session: db.Session):
                     "action_network_id": first(
                         tag["identifiers"],
                         key=lambda x: x.startswith("action_network:"),
-                    ).split(':')[1],
+                    ).split(":")[1],
                     "name": tag.get("name"),
                 }
                 for tag in tags
@@ -135,7 +198,9 @@ def sync_an_attendances_to_db(an: ActionNetworkClient, Session: db.Session):
                 insert(db.Attendance),
                 [
                     {
-                        "action_network_id": attendance["identifiers"][0].split(":")[-1],
+                        "action_network_id": attendance["identifiers"][0].split(":")[
+                            -1
+                        ],
                         "member_action_network_id": attendance["_links"]["osdi:person"][
                             "href"
                         ].split("/")[-1],
