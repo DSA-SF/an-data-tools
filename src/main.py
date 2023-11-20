@@ -7,6 +7,7 @@ from syncjob import (
     sync_an_taggings_to_db,
     sync_an_tags_to_db,
 )
+from views import create_views
 
 
 def main():
@@ -19,6 +20,7 @@ def main():
     sync_an_actions_to_db(an, db.Session)
     sync_an_attendances_to_db(an, db.Session)
 
+    create_views(db.engine)
 
 if __name__ == "__main__":
     main()
