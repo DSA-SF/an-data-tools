@@ -67,5 +67,6 @@ class Tagging(Base):
     modified_ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
 
     __table_args__ = (
-        UniqueConstraint("member_action_network_id", "tag_action_network_id"),
+        # You would think this is unique, but it's not from the AN API.
+        # UniqueConstraint("member_action_network_id", "tag_action_network_id"),
     )

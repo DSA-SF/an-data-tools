@@ -27,6 +27,9 @@ class ActionNetworkClient:
             members.extend(result["_embedded"]["osdi:people"])
             page += 1
 
+            # pprint(result["_embedded"]["osdi:people"])
+            # print("\n\n\n")
+
             if DEBUG_MAX_PAGES and page > DEBUG_MAX_PAGES:
                 break
 
