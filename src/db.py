@@ -36,7 +36,7 @@ class Action(Base):
     created_ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
     modified_ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
     browser_url: Mapped[str] = mapped_column()
-    start_date_ts: Mapped[str] = mapped_column(nullable=True)
+    start_ts: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
     location: Mapped[str] = mapped_column(nullable=True)
 
 
