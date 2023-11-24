@@ -2,6 +2,10 @@
 
 from sqlalchemy import text
 
+view_names = [
+    "member_events_attended",
+    "members_in_good_standing",
+]
 
 views = [
     """
@@ -25,6 +29,12 @@ create or replace view members_in_good_standing as
     where tag.name = 'member_in_good_standing';
     """,
 ]
+
+def drop_views(engine):
+    with engine.connect() as conn:
+        for view_name in view_names:
+            conn.execute(text(f"drop view if exists {view_name}"))
+        conn.commit()
 
 def create_views(engine):
     with engine.connect() as conn:

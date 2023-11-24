@@ -39,9 +39,8 @@ def sync_an_people_to_db(an: ActionNetworkClient, Session: db.Session):
                     "membership_type": member.get("custom_fields", {}).get(
                         "membership_type"
                     ),
-                    "membership_status": member.get("custom_fields", {}).get(
-                        "membership_status"
-                    ),
+                    "national_in_good_standing": member.get("custom_fields", {}).get(
+                        "actionkit_is_member_in_good_standing", False) == "True",
                 }
                 for member in members
             ],

@@ -38,7 +38,7 @@ class Member(Base):
     join_date: Mapped[datetime.date] = mapped_column(Date(), nullable=True)
     lapse_date: Mapped[datetime.date] = mapped_column(Date(), nullable=True)
     membership_type: Mapped[str] = mapped_column(String(63), nullable=True)
-    membership_status: Mapped[str] = mapped_column(String(63), nullable=True)
+    national_in_good_standing: Mapped[bool] = mapped_column(nullable=True)
 
     def __repr__(self) -> str:
         return f"<Member {self.first_name} {self.last_name}>"

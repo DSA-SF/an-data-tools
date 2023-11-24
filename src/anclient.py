@@ -12,7 +12,7 @@ class ActionNetworkClient:
     def __init__(self, an_api_key=config.AN_API_KEY):
         self.an_api_key = an_api_key
 
-    @persist_to_file('memberlist.json')
+    # @persist_to_file('memberlist.json')
     def get_member_list(self):
         DEBUG_MAX_PAGES = 1 if config.DEV_MODE else None
         page = 1

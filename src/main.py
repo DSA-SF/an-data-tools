@@ -7,10 +7,12 @@ from syncjob import (
     sync_an_taggings_to_db,
     sync_an_tags_to_db,
 )
-from views import create_views
+from views import create_views, drop_views
 
 
 def main():
+    drop_views(db.engine)
+
     an = ActionNetworkClient()
     db.Base.metadata.drop_all(db.engine)
     db.Base.metadata.create_all(db.engine)
