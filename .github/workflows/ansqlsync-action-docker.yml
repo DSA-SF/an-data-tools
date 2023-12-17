@@ -1,12 +1,18 @@
-name: Docker Build and Push
+name: an-sql-sync Docker Build and Push
 
 on:
   push:
     branches: 
       - main
+    paths:
+      - an-sql-sync/**
+      - .github/workflows/ansqlsync-action-docker.yml
   pull_request:
     branches:
       - '*'
+    paths:
+      - an-sql-sync/**
+      - .github/workflows/ansqlsync-action-docker.yml
 
 jobs:
   build:
@@ -39,8 +45,8 @@ jobs:
       if: github.ref != 'refs/heads/main'
       uses: docker/build-push-action@v5
       with:
-        context: .
-        file: Dockerfile
+        context: an-sql-sync/
+        file: an-sql-sync/Dockerfile
         push: true
         tags: ghcr.io/${{ env.ORG_NAME }}/${{env.APP_NAME}}:${{ env.BRANCH_NAME }}
         platforms: linux/amd64,linux/arm64/v8
@@ -49,8 +55,8 @@ jobs:
       if: github.ref == 'refs/heads/main'
       uses: docker/build-push-action@v5
       with:
-        context: .
-        file: Dockerfile
+        context: an-sql-sync/
+        file: an-sql-sync/Dockerfile
         push: true
         tags: ghcr.io/${{ env.ORG_NAME }}/${{env.APP_NAME}}:latest
         platforms: linux/amd64,linux/arm64/v8
